@@ -23,9 +23,9 @@
  * limitations under the License.
  */
 
-#include "cmsis_compiler.h"
-
 #include "RP2040.h"
+#include "system_RP2040.h"
+#include "cmsis_compiler.h"
 
 /*----------------------------------------------------------------------------
   Define clocks
@@ -88,6 +88,8 @@ void SystemCoreClockUpdate(void)
 /*----------------------------------------------------------------------------
   System initialization function
  *----------------------------------------------------------------------------*/
+extern const VECTOR_TABLE_Type __VECTOR_TABLE[48];
+
 void SystemInit(void)
 {
 #if defined(__VTOR_PRESENT) && (__VTOR_PRESENT == 1U)

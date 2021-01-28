@@ -88,7 +88,7 @@ typedef enum {
 #define __CM0PLUS_REV                 0x0001U   /*!< CM0PLUS Core Revision                                                     */
 #define __NVIC_PRIO_BITS               2        /*!< Number of Bits used for Priority Levels                                   */
 #define __Vendor_SysTickConfig         0        /*!< Set to 1 if different SysTick Config is used                              */
-#define __VTOR_PRESENT                 0        /*!< Set to 1 if CPU supports Vector Table Offset Register                     */
+#define __VTOR_PRESENT                 1        /*!< Set to 1 if CPU supports Vector Table Offset Register                     */
 #define __MPU_PRESENT                  1        /*!< MPU present                                                               */
 #define __FPU_PRESENT                  0        /*!< FPU present                                                               */
 
