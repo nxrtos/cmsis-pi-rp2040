@@ -8,7 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/CMSIS)
 
 add_executable(${PROJECT_NAME} ${SOURCE})
-target_link_libraries(${PROJECT_NAME} CMSIS CMSIS_DEVICE_RP2XX)
+target_link_libraries(${PROJECT_NAME} CMSIS)
 target_link_options(${PROJECT_NAME} PRIVATE
     -Wl,--script=${CMAKE_CURRENT_LIST_DIR}/gcc_arm.ld)
 
