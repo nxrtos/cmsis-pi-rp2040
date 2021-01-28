@@ -21,7 +21,7 @@
 #endif
 
 // Define interface width: single/dual/quad IO
-#define FRAME_FORMAT 0x02    // 0x01 STD, 0x02 DUAL, 0x03 QUAD
+#define FRAME_FORMAT 0x03    // 0x01 STD, 0x02 DUAL, 0x03 QUAD
 
 // For W25Q080 this is the "Read data fast quad IO" instruction:
 #define CMD_READ 0xeb
@@ -60,6 +60,7 @@ uint32_t read_sreg(uint32_t reg);
 __attribute__((naked)) __attribute__((section("entry"))) void _stage2_boot(void)
 {
     asm("push {LR};");
+    __BKPT(0);
 
     // Set pad configuration:
     // - SCLK 8mA drive, no slew limiting
@@ -73,7 +74,7 @@ __attribute__((naked)) __attribute__((section("entry"))) void _stage2_boot(void)
     PADS_QSPI->GPIO_QSPI_SD3 = GPIO_QSPI_SDx;
 
     // Disable SSI
-    XIP_SSI->SSIENR &= ~XIP_SSI_SSIENR_SSI_EN_Msk;
+    XIP_SSI->SSIENR = 0;
 
     // Set BR
     XIP_SSI->BAUDR = PICO_FLASH_SPI_CLKDIV;
@@ -164,9 +165,10 @@ __attribute__((naked)) __attribute__((section("entry"))) void _stage2_boot(void)
     :
     :);
 
-    if (lr != 0) {
-        __set_MSP(0x10000100);
-        ((void (*)(void)) 0x10000104)();
+    if (lr == 0) {
+        SCB->VTOR = 0x10000100;
+        __set_MSP(*(uint32_t*)0x10000100);
+        ((void (*)(void)) *(uint32_t*)0x10000104)();
     }
 
     ((void (*)(void)) lr)();
@@ -176,8 +178,8 @@ void wait_ssi_rdy(void)
 {
     uint8_t sr;
     do {
-        sr = XIP_SSI->SR;
-    } while (~(sr & XIP_SSI_SR_BUSY_Msk) && (sr & XIP_SSI_SR_TFE_Msk));
+        sr = (XIP_SSI->SR & (XIP_SSI_SR_TFE_Msk | XIP_SSI_SR_BUSY_Msk));
+    } while (sr != XIP_SSI_SR_TFE_Msk);
 }
 
 uint32_t read_sreg(uint32_t reg)
