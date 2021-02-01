@@ -21,7 +21,7 @@
 #endif
 
 // Define interface width: single/dual/quad IO
-#define FRAME_FORMAT 0x03    // 0x01 STD, 0x02 DUAL, 0x03 QUAD
+#define FRAME_FORMAT 0x02   // 0x00 STD, 0x01 DUAL, 0x02 QUAD
 
 // For W25Q080 this is the "Read data fast quad IO" instruction:
 #define CMD_READ 0xeb
@@ -60,7 +60,6 @@ uint32_t read_sreg(uint32_t reg);
 __attribute__((naked)) __attribute__((section("entry"))) void _stage2_boot(void)
 {
     asm("push {LR};");
-    __BKPT(0);
 
     // Set pad configuration:
     // - SCLK 8mA drive, no slew limiting
@@ -115,7 +114,8 @@ __attribute__((naked)) __attribute__((section("entry"))) void _stage2_boot(void)
     // Disable SSI
     XIP_SSI->SSIENR = 0;
 #endif
-    XIP_SSI->CTRLR0 = (FRAME_FORMAT << XIP_SSI_CTRLR0_FRF_Pos) |
+
+    XIP_SSI->CTRLR0 = (FRAME_FORMAT << XIP_SSI_CTRLR0_SPI_FRF_Pos) |
                       (31 << XIP_SSI_CTRLR0_DFS_32_Pos) |
                       (0x03 << XIP_SSI_CTRLR0_TMOD_Pos);
     XIP_SSI->CTRLR1 = 0;
