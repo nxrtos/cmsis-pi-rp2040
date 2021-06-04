@@ -116,7 +116,7 @@ static ARM_USART_CAPABILITIES ARM_USART_GetCapabilities(void)
 
 static int32_t ARM_USART_Initialize(void *instance, ARM_USART_SignalEvent_t cb_event)
 {
-    UART0_Type *uart = (UART0_Type *) instance;
+    UART_Type *uart = (UART_Type *) instance;
 
     // Init defaults
     USART1_Settings.baudrate    = 115200;
@@ -172,7 +172,7 @@ static int32_t ARM_USART_Initialize(void *instance, ARM_USART_SignalEvent_t cb_e
 
 static int32_t ARM_USART_Uninitialize(void *instance)
 {
-    UART0_Type *uart = (UART0_Type *) instance;
+    UART_Type *uart = (UART_Type *) instance;
 
     // Disable UART
     CLEAR_BIT(uart->UARTCR, UART0_UARTCR_UARTEN_Msk);
@@ -184,7 +184,7 @@ static int32_t ARM_USART_Uninitialize(void *instance)
 
 static int32_t ARM_USART_PowerControl(void *instance, ARM_POWER_STATE state)
 {
-    UART0_Type *uart = (UART0_Type *) instance;
+    UART_Type *uart = (UART_Type *) instance;
 
     switch (state) {
     case ARM_POWER_OFF:
@@ -203,7 +203,7 @@ static int32_t ARM_USART_PowerControl(void *instance, ARM_POWER_STATE state)
 
 static int32_t ARM_USART_Send(void *instance, const void *data, uint32_t num)
 {
-    UART0_Type *uart = (UART0_Type *) instance;
+    UART_Type *uart = (UART_Type *) instance;
 
     const uint8_t *buffer = data;
     while (num--) {
@@ -219,7 +219,7 @@ static int32_t ARM_USART_Send(void *instance, const void *data, uint32_t num)
 
 static int32_t ARM_USART_Receive(void *instance, void *data, uint32_t num)
 {
-    UART0_Type *uart = (UART0_Type *) instance;
+    UART_Type *uart = (UART_Type *) instance;
 
     uint8_t *buffer = data;
     while (num--) {
@@ -235,7 +235,7 @@ static int32_t ARM_USART_Receive(void *instance, void *data, uint32_t num)
 
 static int32_t ARM_USART_Transfer(void *instance, const void *data_out, void *data_in, uint32_t num)
 {
-    UART0_Type *uart = (UART0_Type *) instance;
+    UART_Type *uart = (UART_Type *) instance;
     (void) uart;
     // only in dma
     return ARM_DRIVER_ERROR_UNSUPPORTED;
@@ -243,7 +243,7 @@ static int32_t ARM_USART_Transfer(void *instance, const void *data_out, void *da
 
 static uint32_t ARM_USART_GetTxCount(void *instance)
 {
-    UART0_Type *uart = (UART0_Type *) instance;
+    UART_Type *uart = (UART_Type *) instance;
     if (uart == UART0) {
         return tx_count[0];
     } else if (uart == UART1) {
@@ -255,7 +255,7 @@ static uint32_t ARM_USART_GetTxCount(void *instance)
 
 static uint32_t ARM_USART_GetRxCount(void *instance)
 {
-    UART0_Type *uart = (UART0_Type *) instance;
+    UART_Type *uart = (UART_Type *) instance;
     if (uart == UART0) {
         return rx_count[0];
     } else if (uart == UART1) {
@@ -267,7 +267,7 @@ static uint32_t ARM_USART_GetRxCount(void *instance)
 
 static int32_t ARM_USART_Control(void *instance, uint32_t control, uint32_t arg)
 {
-    UART0_Type *uart = (UART0_Type *) instance;
+    UART_Type *uart = (UART_Type *) instance;
 
     switch (control & ARM_USART_CONTROL_Msk) {
     case ARM_USART_CONTROL_TX:
@@ -347,7 +347,7 @@ static int32_t ARM_USART_Control(void *instance, uint32_t control, uint32_t arg)
 
 static ARM_USART_STATUS ARM_USART_GetStatus(void *instance)
 {
-    UART0_Type *uart = (UART0_Type *) instance;
+    UART_Type *uart = (UART_Type *) instance;
 
     ARM_USART_STATUS stat = {0};
     uint32_t         fr   = uart->UARTFR;
@@ -373,7 +373,7 @@ static ARM_USART_STATUS ARM_USART_GetStatus(void *instance)
 
 static int32_t ARM_USART_SetModemControl(void *instance, ARM_USART_MODEM_CONTROL control)
 {
-    UART0_Type *uart = (UART0_Type *) instance;
+    UART_Type *uart = (UART_Type *) instance;
 
     uint32_t rts = uart->UARTCR & UART0_UARTCR_RTSEN_Msk;
     if ((control == ARM_USART_RTS_CLEAR || control == ARM_USART_RTS_SET) && !rts) {
@@ -400,7 +400,7 @@ static int32_t ARM_USART_SetModemControl(void *instance, ARM_USART_MODEM_CONTROL
 
 static ARM_USART_MODEM_STATUS ARM_USART_GetModemStatus(void *instance)
 {
-    UART0_Type *uart = (UART0_Type *) instance;
+    UART_Type *uart = (UART_Type *) instance;
 
     ARM_USART_MODEM_STATUS stat;
     uint32_t               status = uart->UARTFR;
