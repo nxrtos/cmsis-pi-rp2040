@@ -97,30 +97,40 @@ void SystemInit(void)
 #endif
 
     // We only want to set XOSC to run on our board
-    //if (CLOCKS->CLK_REF_CTRL != CLK_REF_SRC_XOSC) {
-        // Setup XOSC range
-        XOSC->CTRL = 0xaa0; // 1_15Mhz
-        // Setup startup delay
-        uint32_t startup_delay = (((12 * 1000000) / 1000) + 128) / 256;
-        XOSC->STARTUP = startup_delay;
-        // Enable XOSC
-        XOSC->CTRL = (XOSC->CTRL & ~XOSC_CTRL_ENABLE_Msk) | (0xFAB << XOSC_CTRL_ENABLE_Pos);
-        while (!(XOSC->STATUS & XOSC_STATUS_ENABLED_Msk));
-        
-        // // First bypass PLL
-        // RESETS->RESET |= RESETS_RESET_pll_sys_Msk;
-        // RESETS->RESET &= ~RESETS_RESET_pll_sys_Msk;
-        // while (!(RESETS->RESET_DONE & RESETS_RESET_DONE_pll_sys_Msk));
-        // PLL_SYS->PWR = 0x0;
-        // PLL_SYS->CS |= PLL_SYS_CS_BYPASS_Msk;
-        // while (!(PLL_SYS->CS & PLL_SYS_CS_BYPASS_Msk));
-        // Change from using PLL to CLK_REF
-        CLOCKS->CLK_REF_CTRL = 0x2 << CLOCKS_CLK_REF_CTRL_SRC_Pos;
+    // Setup XOSC range
+    XOSC->CTRL = 0xaa0; // 1_15Mhz
+    // Setup startup delay
+    uint32_t startup_delay = (((12 * 1000000) / 1000) + 128) / 256;
+    XOSC->STARTUP = startup_delay;
+    // Enable XOSC
+    XOSC->CTRL = (XOSC->CTRL & ~XOSC_CTRL_ENABLE_Msk) | (0xFAB << XOSC_CTRL_ENABLE_Pos);
+    while (!(XOSC->STATUS & XOSC_STATUS_ENABLED_Msk));
+    
+    // // First bypass PLL
+    // RESETS->RESET |= RESETS_RESET_pll_sys_Msk;
+    // RESETS->RESET &= ~RESETS_RESET_pll_sys_Msk;
+    // while (!(RESETS->RESET_DONE & RESETS_RESET_DONE_pll_sys_Msk));
+    // PLL_SYS->PWR = 0x0;
+    // PLL_SYS->CS |= PLL_SYS_CS_BYPASS_Msk;
+    // while (!(PLL_SYS->CS & PLL_SYS_CS_BYPASS_Msk));
+    // Change from using PLL to CLK_REF
+    CLOCKS->CLK_REF_CTRL = 0x2 << CLOCKS_CLK_REF_CTRL_SRC_Pos;
 
-        MODIFY_REG(CLOCKS->CLK_SYS_CTRL, CLOCKS_CLK_SYS_CTRL_SRC_Msk, 0);
-        MODIFY_REG(CLOCKS->CLK_SYS_CTRL, CLOCKS_CLK_SYS_CTRL_AUXSRC_Msk, 0x03 << CLOCKS_CLK_SYS_CTRL_AUXSRC_Pos);
-        MODIFY_REG(CLOCKS->CLK_SYS_CTRL, CLOCKS_CLK_SYS_CTRL_SRC_Msk, 0x01 << CLOCKS_CLK_SYS_CTRL_SRC_Pos);
-    //}
+    MODIFY_REG(CLOCKS->CLK_SYS_CTRL, CLOCKS_CLK_SYS_CTRL_SRC_Msk, 0);
+    MODIFY_REG(CLOCKS->CLK_SYS_CTRL, CLOCKS_CLK_SYS_CTRL_AUXSRC_Msk, 0x03 << CLOCKS_CLK_SYS_CTRL_AUXSRC_Pos);
+    MODIFY_REG(CLOCKS->CLK_SYS_CTRL, CLOCKS_CLK_SYS_CTRL_SRC_Msk, 0x01 << CLOCKS_CLK_SYS_CTRL_SRC_Pos);
+
+    // Disable all clocks
+    CLOCKS->ENABLED0 = 0x0;
+    CLOCKS->ENABLED1 = 0x0;
+    
+    SET_BIT(RESETS->RESET, RESETS_RESET_pads_bank0_Msk);
+    CLEAR_BIT(RESETS->RESET, RESETS_RESET_pads_bank0_Msk);
+    while (!(RESETS->RESET_DONE & RESETS_RESET_DONE_pads_bank0_Msk));
+    
+    SET_BIT(RESETS->RESET, RESETS_RESET_io_bank0_Msk);
+    CLEAR_BIT(RESETS->RESET, RESETS_RESET_io_bank0_Msk);
+    while (!(RESETS->RESET_DONE & RESETS_RESET_DONE_io_bank0_Msk));
 
     SystemCoreClockUpdate();
 }
