@@ -3,13 +3,13 @@
  * Title:        arm_mat_inverse_f16.c
  * Description:  Floating-point matrix inverse
  *
- * $Date:        18. March 2020
- * $Revision:    V1.6.0
+ * $Date:        23 April 2021
+ * $Revision:    V1.9.0
  *
- * Target Processor: Cortex-M cores
+ * Target Processor: Cortex-M and Cortex-A cores
  * -------------------------------------------------------------------- */
 /*
- * Copyright (C) 2010-2020 ARM Limited or its affiliates. All rights reserved.
+ * Copyright (C) 2010-2021 ARM Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -67,7 +67,7 @@ arm_status arm_mat_inverse_f16(
     float16_t *pTmpA, *pTmpB;
 
     _Float16 in = 0.0f16;        /* Temporary input values  */
-    uint32_t  i, rowCnt, flag = 0U, j, loopCnt, k, l;   /* loop counters */
+    uint32_t  i, rowCnt, flag = 0U, j, loopCnt, l;   /* loop counters */
     arm_status status;          /* status of matrix inverse */
     uint32_t  blkCnt;
 
@@ -191,10 +191,7 @@ arm_status arm_mat_inverse_f16(
              * Temporary variable to hold the pivot value
              */
             in = *pInT1;
-            /*
-             * Destination pointer modifier
-             */
-            k = 1U;
+            
 
             /*
              * Check if the pivot element is zero
@@ -204,13 +201,13 @@ arm_status arm_mat_inverse_f16(
                 /*
                  * Loop over the number rows present below
                  */
-                for (i = (l + 1U); i < numRows; i++)
+                for (i = 1U; i < numRows-l; i++)
                 {
                     /*
                      * Update the input and destination pointers
                      */
                     pInT2 = pInT1 + (numCols * i);
-                    pOutT2 = pOutT1 + (numCols * k);
+                    pOutT2 = pOutT1 + (numCols * i);
                     /*
                      * Check if there is a non zero pivot element to
                      * * replace in the rows below
@@ -300,10 +297,7 @@ arm_status arm_mat_inverse_f16(
                          */
                         break;
                     }
-                    /*
-                     * Update the destination pointer modifier
-                     */
-                    k++;
+              
                 }
             }
 
@@ -569,7 +563,7 @@ arm_status arm_mat_inverse_f16(
   uint32_t numCols = pSrc->numCols;              /* Number of Cols in the matrix  */
 
   _Float16 Xchg, in = 0.0f16, in1;                /* Temporary input values  */
-  uint32_t i, rowCnt, flag = 0U, j, loopCnt, k, l;      /* loop counters */
+  uint32_t i, rowCnt, flag = 0U, j, loopCnt, k,l;      /* loop counters */
   arm_status status;                             /* status of matrix inverse */
 
 #ifdef ARM_MATH_MATRIX_CHECK
@@ -680,20 +674,17 @@ arm_status arm_mat_inverse_f16(
       /* Temporary variable to hold the pivot value */
       in = *pInT1;
 
-      
-      /* Destination pointer modifier */
-      k = 1U;
 
       /* Check if the pivot element is zero */
       if (*pInT1 == 0.0f16)
       {
         /* Loop over the number rows present below */
 
-        for (i = (l + 1U); i < numRows; i++)
+        for (i = 1U; i < numRows-l; i++)
         {
           /* Update the input and destination pointers */
           pInT2 = pInT1 + (numCols * i);
-          pOutT2 = pOutT1 + (numCols * k);
+          pOutT2 = pOutT1 + (numCols * i);
 
           /* Check if there is a non zero pivot element to
            * replace in the rows below */
@@ -735,10 +726,6 @@ arm_status arm_mat_inverse_f16(
             break;
           }
 
-          /* Update the destination pointer modifier */
-          k++;
-
-          /* Decrement loop counter */
         }
       }
 

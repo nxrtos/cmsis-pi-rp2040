@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "Error.h"
 
-#define SNR_THRESHOLD 60
+#define SNR_THRESHOLD 59
 
 /* 
 
@@ -167,6 +167,7 @@ void UnaryTestsF16::test_mat_vec_mult_f16()
     void UnaryTestsF16::test_mat_add_f16()
     {     
       LOADDATA2();
+      arm_status status;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -175,7 +176,8 @@ void UnaryTestsF16::test_mat_vec_mult_f16()
 
           PREPAREDATA2();
 
-          arm_mat_add_f16(&this->in1,&this->in2,&this->out);
+          status=arm_mat_add_f16(&this->in1,&this->in2,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
 
@@ -192,6 +194,7 @@ void UnaryTestsF16::test_mat_vec_mult_f16()
 void UnaryTestsF16::test_mat_sub_f16()
     {     
       LOADDATA2();
+      arm_status status;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -200,7 +203,8 @@ void UnaryTestsF16::test_mat_sub_f16()
 
           PREPAREDATA2();
 
-          arm_mat_sub_f16(&this->in1,&this->in2,&this->out);
+          status=arm_mat_sub_f16(&this->in1,&this->in2,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
 
@@ -217,6 +221,7 @@ void UnaryTestsF16::test_mat_sub_f16()
 void UnaryTestsF16::test_mat_scale_f16()
     {     
       LOADDATA1();
+      arm_status status;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -225,7 +230,8 @@ void UnaryTestsF16::test_mat_scale_f16()
 
           PREPAREDATA1(false);
 
-          arm_mat_scale_f16(&this->in1,0.5f,&this->out);
+          status=arm_mat_scale_f16(&this->in1,0.5f,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
 
@@ -242,6 +248,7 @@ void UnaryTestsF16::test_mat_scale_f16()
 void UnaryTestsF16::test_mat_trans_f16()
     {     
       LOADDATA1();
+      arm_status status;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -250,7 +257,8 @@ void UnaryTestsF16::test_mat_trans_f16()
 
           PREPAREDATA1(true);
 
-          arm_mat_trans_f16(&this->in1,&this->out);
+          status=arm_mat_trans_f16(&this->in1,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
 
@@ -267,6 +275,7 @@ void UnaryTestsF16::test_mat_trans_f16()
 void UnaryTestsF16::test_mat_cmplx_trans_f16()
     {     
       LOADDATA1();
+      arm_status status;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -275,7 +284,8 @@ void UnaryTestsF16::test_mat_cmplx_trans_f16()
 
           PREPAREDATA1C(true);
 
-          arm_mat_cmplx_trans_f16(&this->in1,&this->out);
+          status=arm_mat_cmplx_trans_f16(&this->in1,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += 2*(rows * columns);
 
@@ -288,6 +298,22 @@ void UnaryTestsF16::test_mat_cmplx_trans_f16()
       ASSERT_CLOSE_ERROR(output,ref,ABS_ERROR,REL_ERROR);
 
     }
+
+static void refInnerTail(float16_t *b)
+{
+    b[0] = 1.0f;
+    b[1] = -2.0f;
+    b[2] = 3.0f;
+    b[3] = -4.0f;
+}
+
+static void checkInnerTail(float16_t *b)
+{
+    ASSERT_TRUE(b[0] == 1.0f);
+    ASSERT_TRUE(b[1] == -2.0f);
+    ASSERT_TRUE(b[2] == 3.0f);
+    ASSERT_TRUE(b[3] == -4.0f);
+}
 
 void UnaryTestsF16::test_mat_inverse_f16()
     {     
@@ -309,15 +335,18 @@ void UnaryTestsF16::test_mat_inverse_f16()
 
           PREPAREDATA1(false);
 
+          refInnerTail(outp+(rows * columns));
+
           status=arm_mat_inverse_f16(&this->in1,&this->out);
           ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
           inp1 += (rows * columns);
 
+          checkInnerTail(outp);
+
       }
 
-      ASSERT_EMPTY_TAIL(output);
 
       ASSERT_SNR(output,ref,(float16_t)SNR_THRESHOLD_INV);
 

@@ -22,7 +22,7 @@ Comparisons for inverse
 /* Not very accurate for big matrix.
 But big matrix needed for checking the vectorized code */
 
-#define SNR_THRESHOLD_INV 70
+#define SNR_THRESHOLD_INV 67
 #define REL_ERROR_INV (1.0e-3)
 #define ABS_ERROR_INV (1.0e-3)
 
@@ -39,6 +39,9 @@ Comparison for Cholesky
 
 #define REL_ERROR_LDLT (1e-5)
 #define ABS_ERROR_LDLT (1e-5)
+
+#define REL_ERROR_LDLT_SPDO (1e-5)
+#define ABS_ERROR_LDLT_SDPO (2e-1)
 
 /* Upper bound of maximum matrix dimension used by Python */
 #define MAXMATRIXDIM 40
@@ -188,6 +191,7 @@ void UnaryTestsF32::test_mat_vec_mult_f32()
     void UnaryTestsF32::test_mat_add_f32()
     {     
       LOADDATA2();
+      arm_status status;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -196,7 +200,8 @@ void UnaryTestsF32::test_mat_vec_mult_f32()
 
           PREPAREDATA2();
 
-          arm_mat_add_f32(&this->in1,&this->in2,&this->out);
+          status=arm_mat_add_f32(&this->in1,&this->in2,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
 
@@ -213,6 +218,7 @@ void UnaryTestsF32::test_mat_vec_mult_f32()
 void UnaryTestsF32::test_mat_sub_f32()
     {     
       LOADDATA2();
+      arm_status status;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -221,7 +227,8 @@ void UnaryTestsF32::test_mat_sub_f32()
 
           PREPAREDATA2();
 
-          arm_mat_sub_f32(&this->in1,&this->in2,&this->out);
+          status=arm_mat_sub_f32(&this->in1,&this->in2,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
 
@@ -238,6 +245,7 @@ void UnaryTestsF32::test_mat_sub_f32()
 void UnaryTestsF32::test_mat_scale_f32()
     {     
       LOADDATA1();
+      arm_status status;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -246,7 +254,8 @@ void UnaryTestsF32::test_mat_scale_f32()
 
           PREPAREDATA1(false);
 
-          arm_mat_scale_f32(&this->in1,0.5f,&this->out);
+          status=arm_mat_scale_f32(&this->in1,0.5f,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
 
@@ -263,6 +272,7 @@ void UnaryTestsF32::test_mat_scale_f32()
 void UnaryTestsF32::test_mat_trans_f32()
     {     
       LOADDATA1();
+      arm_status status;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -271,7 +281,8 @@ void UnaryTestsF32::test_mat_trans_f32()
 
           PREPAREDATA1(true);
 
-          arm_mat_trans_f32(&this->in1,&this->out);
+          status=arm_mat_trans_f32(&this->in1,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
 
@@ -288,6 +299,7 @@ void UnaryTestsF32::test_mat_trans_f32()
 void UnaryTestsF32::test_mat_cmplx_trans_f32()
     {     
       LOADDATA1();
+      arm_status status;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -296,7 +308,8 @@ void UnaryTestsF32::test_mat_cmplx_trans_f32()
 
           PREPAREDATA1C(true);
 
-          arm_mat_cmplx_trans_f32(&this->in1,&this->out);
+          status=arm_mat_cmplx_trans_f32(&this->in1,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += 2*(rows * columns);
 
@@ -309,6 +322,24 @@ void UnaryTestsF32::test_mat_cmplx_trans_f32()
       ASSERT_CLOSE_ERROR(output,ref,ABS_ERROR,REL_ERROR);
 
     }
+
+static void refInnerTail(float32_t *b)
+{
+    b[0] = 1.0f;
+    b[1] = -2.0f;
+    b[2] = 3.0f;
+    b[3] = -4.0f;
+}
+
+static void checkInnerTail(float32_t *b)
+{
+    ASSERT_TRUE(b[0] == 1.0f);
+    ASSERT_TRUE(b[1] == -2.0f);
+    ASSERT_TRUE(b[2] == 3.0f);
+    ASSERT_TRUE(b[3] == -4.0f);
+}
+
+
 
 void UnaryTestsF32::test_mat_inverse_f32()
     {     
@@ -330,15 +361,18 @@ void UnaryTestsF32::test_mat_inverse_f32()
 
           PREPAREDATA1(false);
 
+          refInnerTail(outp+(rows * columns));
+
           status=arm_mat_inverse_f32(&this->in1,&this->out);
           ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
           inp1 += (rows * columns);
 
+          checkInnerTail(outp);
+
       }
 
-      ASSERT_EMPTY_TAIL(output);
 
       ASSERT_SNR(output,ref,(float32_t)SNR_THRESHOLD_INV);
 
@@ -588,7 +622,6 @@ void UnaryTestsF32::test_mat_inverse_f32()
       int i;
       arm_status status;
 
-      int nb=0;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -620,7 +653,6 @@ void UnaryTestsF32::test_mat_inverse_f32()
 
           inp1 += (rows * columns);
 
-          nb += (rows * columns);
 
       }
 
@@ -631,7 +663,7 @@ void UnaryTestsF32::test_mat_inverse_f32()
       ASSERT_EMPTY_TAIL(outputb);
 
 
-      ASSERT_CLOSE_ERROR(outputa,outputb,ABS_ERROR_LDLT,REL_ERROR_LDLT);
+      ASSERT_CLOSE_ERROR(outputa,outputb,snrAbs,snrRel);
 
 
   
@@ -728,6 +760,8 @@ void UnaryTestsF32::test_mat_inverse_f32()
 
             output.create(ref.nbSamples(),UnaryTestsF32::OUT_F32_ID,mgr);
             a.create(MAXMATRIXDIM*MAXMATRIXDIM,UnaryTestsF32::TMPA_F32_ID,mgr);
+
+            
          break;
 
          case TEST_SOLVE_UPPER_TRIANGULAR_F32_9:
@@ -772,6 +806,9 @@ void UnaryTestsF32::test_mat_inverse_f32()
             tmpbpat.create(MAXMATRIXDIM*MAXMATRIXDIM,UnaryTestsF32::TMPC_F64_ID,mgr);
             tmpcpat.create(MAXMATRIXDIM*MAXMATRIXDIM,UnaryTestsF32::TMPD_F64_ID,mgr);
 
+            this->snrRel=REL_ERROR_LDLT;
+            this->snrAbs=ABS_ERROR_LDLT;
+
          break;
 
          case TEST_MAT_LDL_F32_12:
@@ -791,6 +828,9 @@ void UnaryTestsF32::test_mat_inverse_f32()
             tmpapat.create(MAXMATRIXDIM*MAXMATRIXDIM,UnaryTestsF32::TMPB_F64_ID,mgr);
             tmpbpat.create(MAXMATRIXDIM*MAXMATRIXDIM,UnaryTestsF32::TMPC_F64_ID,mgr);
             tmpcpat.create(MAXMATRIXDIM*MAXMATRIXDIM,UnaryTestsF32::TMPD_F64_ID,mgr);
+
+            this->snrRel=REL_ERROR_LDLT_SPDO;
+            this->snrAbs=ABS_ERROR_LDLT_SDPO;
 
 
          break;

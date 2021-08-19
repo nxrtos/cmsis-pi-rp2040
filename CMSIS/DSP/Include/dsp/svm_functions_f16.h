@@ -2,7 +2,8 @@
  * @file     svm_functions_f16.h
  * @brief    Public header file for CMSIS DSP Library
  * @version  V1.9.0
- * @date     20. July 2020
+ * @date     23 April 2021
+ * Target Processor: Cortex-M and Cortex-A cores
  ******************************************************************************/
 /*
  * Copyright (c) 2010-2020 Arm Limited or its affiliates. All rights reserved.
@@ -131,7 +132,7 @@ typedef struct
   const float16_t *dualCoefficients;      /**< Dual coefficients */
   const float16_t *supportVectors;        /**< Support vectors */
   const int32_t   *classes;               /**< The two SVM classes */
-  float16_t       coef0;                  /**< Independant constant */
+  float16_t       coef0;                  /**< Independent constant */
   float16_t       gamma;                  /**< Gamma factor */
 } arm_svm_sigmoid_instance_f16;
 

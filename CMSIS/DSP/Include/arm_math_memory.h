@@ -2,10 +2,11 @@
  * @file     arm_math_memory.h
  * @brief    Public header file for CMSIS DSP Library
  * @version  V1.9.0
- * @date     20. July 2020
+ * @date     23 April 2021
+ * Target Processor: Cortex-M and Cortex-A cores
  ******************************************************************************/
 /*
- * Copyright (c) 2010-2020 Arm Limited or its affiliates. All rights reserved.
+ * Copyright (c) 2010-2021 Arm Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *

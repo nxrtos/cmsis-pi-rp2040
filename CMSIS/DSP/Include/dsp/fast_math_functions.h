@@ -2,7 +2,8 @@
  * @file     fast_math_functions.h
  * @brief    Public header file for CMSIS DSP Library
  * @version  V1.9.0
- * @date     20. July 2020
+ * @date     23 April 2021
+ * Target Processor: Cortex-M and Cortex-A cores
  ******************************************************************************/
 /*
  * Copyright (c) 2010-2020 Arm Limited or its affiliates. All rights reserved.
@@ -278,6 +279,23 @@ arm_status arm_sqrt_q15(
   /**
    * @} end of SQRT group
    */
+
+  /**
+  @brief         Fixed point division
+  @param[in]     numerator    Numerator
+  @param[in]     denominator  Denominator
+  @param[out]    quotient     Quotient value normalized between -1.0 and 1.0
+  @param[out]    shift        Shift left value to get the unnormalized quotient
+  @return        error status
+
+  When dividing by 0, an error ARM_MATH_NANINF is returned. And the quotient is forced
+  to the saturated negative or positive value.
+ */
+
+arm_status arm_divide_q15(q15_t numerator,
+  q15_t denominator,
+  q15_t *quotient,
+  int16_t *shift);
 
 
 #ifdef   __cplusplus

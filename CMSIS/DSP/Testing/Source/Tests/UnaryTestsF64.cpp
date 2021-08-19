@@ -116,6 +116,7 @@ void UnaryTestsF64::test_mat_add_f64()
 void UnaryTestsF64::test_mat_sub_f64()
 {
       LOADDATA2();
+      arm_status status;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -124,7 +125,8 @@ void UnaryTestsF64::test_mat_sub_f64()
 
           PREPAREDATA2();
 
-          arm_mat_sub_f64(&this->in1,&this->in2,&this->out);
+          status=arm_mat_sub_f64(&this->in1,&this->in2,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
 
@@ -145,6 +147,7 @@ void UnaryTestsF64::test_mat_scale_f64()
 void UnaryTestsF64::test_mat_trans_f64()
 {
       LOADDATA1();
+      arm_status status;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -153,7 +156,8 @@ void UnaryTestsF64::test_mat_trans_f64()
 
           PREPAREDATA1(true);
 
-          arm_mat_trans_f64(&this->in1,&this->out);
+          status=arm_mat_trans_f64(&this->in1,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
 
@@ -167,6 +171,24 @@ void UnaryTestsF64::test_mat_trans_f64()
 
 }
 
+/*
+
+Test framework is only adding 16 bytes of free memory after the end of a buffer.
+So, we limit to 2 float64 for checking out of buffer write.
+*/
+static void refInnerTail(float64_t *b)
+{
+    b[0] = 1.0;
+    b[1] = -2.0;
+}
+
+static void checkInnerTail(float64_t *b)
+{
+    ASSERT_TRUE(b[0] == 1.0);
+    ASSERT_TRUE(b[1] == -2.0);
+}
+
+
 void UnaryTestsF64::test_mat_inverse_f64()
     {     
       const float64_t *inp1=input1.ptr();    
@@ -178,7 +200,8 @@ void UnaryTestsF64::test_mat_inverse_f64()
       int nbMatrixes = dims.nbSamples();
       int rows,columns;                      
       int i;
-
+      arm_status status;
+      
       for(i=0;i < nbMatrixes ; i ++)
       {
           rows = *dimsp++;
@@ -186,14 +209,18 @@ void UnaryTestsF64::test_mat_inverse_f64()
 
           PREPAREDATA1(false);
 
-          arm_mat_inverse_f64(&this->in1,&this->out);
+          refInnerTail(outp+(rows * columns));
+
+          status=arm_mat_inverse_f64(&this->in1,&this->out);
+          ASSERT_TRUE(status==ARM_MATH_SUCCESS);
 
           outp += (rows * columns);
           inp1 += (rows * columns);
 
+          checkInnerTail(outp);
+
       }
 
-      ASSERT_EMPTY_TAIL(output);
 
       ASSERT_SNR(output,ref,(float64_t)SNR_THRESHOLD);
 
@@ -412,7 +439,6 @@ void UnaryTestsF64::test_mat_inverse_f64()
       int i;
       arm_status status;
 
-      int nb=0;
 
       for(i=0;i < nbMatrixes ; i ++)
       {
@@ -444,8 +470,6 @@ void UnaryTestsF64::test_mat_inverse_f64()
           outb +=(rows * columns);
 
           inp1 += (rows * columns);
-
-          nb += (rows * columns);
 
       }
 

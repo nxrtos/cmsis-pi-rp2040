@@ -48,7 +48,8 @@
  * \par Description:
  * \par
  * Demonstrates the use of Bayesian classifier functions. It is complementing the tutorial
- * about classical ML with CMSIS-DSP and python scikit-learn.
+ * about classical ML with CMSIS-DSP and python scikit-learn:
+ * https://developer.arm.com/solutions/machine-learning-on-arm/developer-material/how-to-guides/implement-classical-ml-with-arm-cmsis-dsp-libraries
  *
  */
 
@@ -91,6 +92,7 @@ int32_t main(void)
 
   /* Result of the classifier */
   float32_t result[NB_OF_CLASSES];
+  float32_t temp[NB_OF_CLASSES];
   float32_t maxProba;
   uint32_t index;
   
@@ -104,7 +106,7 @@ int32_t main(void)
   in[0] = 1.5f;
   in[1] = 1.0f;
 
-  index = arm_gaussian_naive_bayes_predict_f32(&S, in, result);
+  index = arm_gaussian_naive_bayes_predict_f32(&S, in, result,temp);
 
   maxProba = result[index];
 
@@ -115,7 +117,7 @@ int32_t main(void)
   in[0] = -1.5f;
   in[1] = 1.0f;
 
-  index = arm_gaussian_naive_bayes_predict_f32(&S, in, result);
+  index = arm_gaussian_naive_bayes_predict_f32(&S, in, result,temp);
 
   maxProba = result[index];
 
@@ -126,7 +128,7 @@ int32_t main(void)
   in[0] = 0.0f;
   in[1] = -3.0f;
 
-  index = arm_gaussian_naive_bayes_predict_f32(&S, in, result);
+  index = arm_gaussian_naive_bayes_predict_f32(&S, in, result,temp);
 
   maxProba = result[index];
 

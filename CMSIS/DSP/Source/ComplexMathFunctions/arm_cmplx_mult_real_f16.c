@@ -3,11 +3,13 @@
  * Title:        arm_cmplx_mult_real_f16.c
  * Description:  Floating-point complex by real multiplication
  *
+ * $Date:        23 April 2021
+ * $Revision:    V1.9.0
  *
- * Target Processor: Cortex-M cores
+ * Target Processor: Cortex-M and Cortex-A cores
  * -------------------------------------------------------------------- */
 /*
- * Copyright (C) 2010-2020 ARM Limited or its affiliates. All rights reserved.
+ * Copyright (C) 2010-2021 ARM Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -77,7 +79,7 @@ void arm_cmplx_mult_real_f16(
         float16_t * pCmplxDst,
         uint32_t numSamples)
 {
-    const static uint16_t stride_cmplx_x_real_16[8] = {
+    static const uint16_t stride_cmplx_x_real_16[8] = {
         0, 0, 1, 1, 2, 2, 3, 3
         };
     uint32_t blockSizeC = numSamples * CMPLX_DIM;   /* loop counters */

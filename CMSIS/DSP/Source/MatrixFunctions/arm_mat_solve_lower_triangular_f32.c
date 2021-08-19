@@ -3,11 +3,13 @@
  * Title:        arm_mat_solve_lower_triangular_f32.c
  * Description:  Solve linear system LT X = A with LT lower triangular matrix
  *
+ * $Date:        23 April 2021
+ * $Revision:    V1.9.0
  *
- * Target Processor: Cortex-M cores
+ * Target Processor: Cortex-M and Cortex-A cores
  * -------------------------------------------------------------------- */
 /*
- * Copyright (C) 2010-2020 ARM Limited or its affiliates. All rights reserved.
+ * Copyright (C) 2010-2021 ARM Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -60,9 +62,9 @@
 #ifdef ARM_MATH_MATRIX_CHECK
 
   /* Check for matrix mismatch condition */
-  if ((ut->numRows != lt->numCols) ||
+  if ((lt->numRows != lt->numCols) ||
       (a->numRows != a->numCols) ||
-      (ut->numRows != a->numRows)   )
+      (lt->numRows != a->numRows)   )
   {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;
@@ -161,9 +163,9 @@
 #ifdef ARM_MATH_MATRIX_CHECK
 
   /* Check for matrix mismatch condition */
-  if ((ut->numRows != lt->numCols) ||
+  if ((lt->numRows != lt->numCols) ||
       (a->numRows != a->numCols) ||
-      (ut->numRows != a->numRows)   )
+      (lt->numRows != a->numRows)   )
   {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;
@@ -259,11 +261,10 @@
 
 
 #ifdef ARM_MATH_MATRIX_CHECK
-
   /* Check for matrix mismatch condition */
-  if ((ut->numRows != lt->numCols) ||
+  if ((lt->numRows != lt->numCols) ||
       (a->numRows != a->numCols) ||
-      (ut->numRows != a->numRows)   )
+      (lt->numRows != a->numRows)   )
   {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;

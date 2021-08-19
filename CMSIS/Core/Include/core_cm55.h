@@ -1,11 +1,11 @@
 /**************************************************************************//**
  * @file     core_cm55.h
  * @brief    CMSIS Cortex-M55 Core Peripheral Access Layer Header File
- * @version  V1.1.0
- * @date     15. April 2020
+ * @version  V1.2.1
+ * @date     04. June 2021
  ******************************************************************************/
 /*
- * Copyright (c) 2018-2020 Arm Limited. All rights reserved.
+ * Copyright (c) 2018-2021 Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -210,7 +210,7 @@
     #define __FPU_PRESENT             0U
     #warning "__FPU_PRESENT not defined in device header file; using default!"
   #endif
-  
+
   #if __FPU_PRESENT != 0U
     #ifndef __FPU_DP
       #define __FPU_DP             0U
@@ -232,12 +232,12 @@
     #define __DCACHE_PRESENT          0U
     #warning "__DCACHE_PRESENT not defined in device header file; using default!"
   #endif
-  
+
   #ifndef __VTOR_PRESENT
     #define __VTOR_PRESENT             1U
     #warning "__VTOR_PRESENT not defined in device header file; using default!"
   #endif
-  
+
   #ifndef __PMU_PRESENT
     #define __PMU_PRESENT             0U
     #warning "__PMU_PRESENT not defined in device header file; using default!"
@@ -766,22 +766,22 @@ typedef struct
 #define SCB_CFSR_MEMFAULTSR_Msk            (0xFFUL /*<< SCB_CFSR_MEMFAULTSR_Pos*/)        /*!< SCB CFSR: Memory Manage Fault Status Register Mask */
 
 /* MemManage Fault Status Register (part of SCB Configurable Fault Status Register) */
-#define SCB_CFSR_MMARVALID_Pos             (SCB_SHCSR_MEMFAULTACT_Pos + 7U)               /*!< SCB CFSR (MMFSR): MMARVALID Position */
+#define SCB_CFSR_MMARVALID_Pos             (SCB_CFSR_MEMFAULTSR_Pos + 7U)                 /*!< SCB CFSR (MMFSR): MMARVALID Position */
 #define SCB_CFSR_MMARVALID_Msk             (1UL << SCB_CFSR_MMARVALID_Pos)                /*!< SCB CFSR (MMFSR): MMARVALID Mask */
 
-#define SCB_CFSR_MLSPERR_Pos               (SCB_SHCSR_MEMFAULTACT_Pos + 5U)               /*!< SCB CFSR (MMFSR): MLSPERR Position */
+#define SCB_CFSR_MLSPERR_Pos               (SCB_CFSR_MEMFAULTSR_Pos + 5U)                 /*!< SCB CFSR (MMFSR): MLSPERR Position */
 #define SCB_CFSR_MLSPERR_Msk               (1UL << SCB_CFSR_MLSPERR_Pos)                  /*!< SCB CFSR (MMFSR): MLSPERR Mask */
 
-#define SCB_CFSR_MSTKERR_Pos               (SCB_SHCSR_MEMFAULTACT_Pos + 4U)               /*!< SCB CFSR (MMFSR): MSTKERR Position */
+#define SCB_CFSR_MSTKERR_Pos               (SCB_CFSR_MEMFAULTSR_Pos + 4U)                 /*!< SCB CFSR (MMFSR): MSTKERR Position */
 #define SCB_CFSR_MSTKERR_Msk               (1UL << SCB_CFSR_MSTKERR_Pos)                  /*!< SCB CFSR (MMFSR): MSTKERR Mask */
 
-#define SCB_CFSR_MUNSTKERR_Pos             (SCB_SHCSR_MEMFAULTACT_Pos + 3U)               /*!< SCB CFSR (MMFSR): MUNSTKERR Position */
+#define SCB_CFSR_MUNSTKERR_Pos             (SCB_CFSR_MEMFAULTSR_Pos + 3U)                 /*!< SCB CFSR (MMFSR): MUNSTKERR Position */
 #define SCB_CFSR_MUNSTKERR_Msk             (1UL << SCB_CFSR_MUNSTKERR_Pos)                /*!< SCB CFSR (MMFSR): MUNSTKERR Mask */
 
-#define SCB_CFSR_DACCVIOL_Pos              (SCB_SHCSR_MEMFAULTACT_Pos + 1U)               /*!< SCB CFSR (MMFSR): DACCVIOL Position */
+#define SCB_CFSR_DACCVIOL_Pos              (SCB_CFSR_MEMFAULTSR_Pos + 1U)                 /*!< SCB CFSR (MMFSR): DACCVIOL Position */
 #define SCB_CFSR_DACCVIOL_Msk              (1UL << SCB_CFSR_DACCVIOL_Pos)                 /*!< SCB CFSR (MMFSR): DACCVIOL Mask */
 
-#define SCB_CFSR_IACCVIOL_Pos              (SCB_SHCSR_MEMFAULTACT_Pos + 0U)               /*!< SCB CFSR (MMFSR): IACCVIOL Position */
+#define SCB_CFSR_IACCVIOL_Pos              (SCB_CFSR_MEMFAULTSR_Pos + 0U)                 /*!< SCB CFSR (MMFSR): IACCVIOL Position */
 #define SCB_CFSR_IACCVIOL_Msk              (1UL /*<< SCB_CFSR_IACCVIOL_Pos*/)             /*!< SCB CFSR (MMFSR): IACCVIOL Mask */
 
 /* BusFault Status Register (part of SCB Configurable Fault Status Register) */
@@ -1347,6 +1347,40 @@ typedef struct
 #define DWT_FUNCTION_MATCH_Msk             (0xFUL /*<< DWT_FUNCTION_MATCH_Pos*/)       /*!< DWT FUNCTION: MATCH Mask */
 
 /*@}*/ /* end of group CMSIS_DWT */
+
+
+/**
+  \ingroup  CMSIS_core_register
+  \defgroup PwrModCtl_Type     Power Mode Control Registers
+  \brief    Type definitions for the Power Mode Control Registers (PWRMODCTL)
+  @{
+ */
+
+/**
+  \brief  Structure type to access the Power Mode Control Registers (PWRMODCTL).
+ */
+typedef struct
+{
+  __IOM uint32_t CPDLPSTATE;
+  __IOM uint32_t DPDLPSTATE;
+} PwrModCtl_Type;
+
+
+/* PWRMODCTL Core Power Domain Low Power State (CPDLPSTATE) Register Definitions */
+#define PWRMODCTL_CPDLPSTATE_CLPSTATE_Pos                 0U                           /*!< PWRMODCTL CPDLPSTATE CLPSTATE Position */
+#define PWRMODCTL_CPDLPSTATE_CLPSTATE_Msk                 3UL                          /*!< PWRMODCTL CPDLPSTATE CLPSTATE Mask */
+
+#define PWRMODCTL_CPDLPSTATE_ELPSTATE_Pos                 4U                           /*!< PWRMODCTL CPDLPSTATE ELPSTATE Position */
+#define PWRMODCTL_CPDLPSTATE_ELPSTATE_Msk                 3UL                          /*!< PWRMODCTL CPDLPSTATE ELPSTATE Mask */
+
+#define PWRMODCTL_CPDLPSTATE_RLPSTATE_Pos                 8U                           /*!< PWRMODCTL CPDLPSTATE RLPSTATE Position */
+#define PWRMODCTL_CPDLPSTATE_RLPSTATE_Msk                 3UL                          /*!< PWRMODCTL CPDLPSTATE RLPSTATE Mask */
+
+/* PWRMODCTL Debug Power Domain Low Power State (DPDLPSTATE) Register Definitions */
+#define PWRMODCTL_DPDLPSTATE_DLPSTATE_Pos                 0U                           /*!< PWRMODCTL DPDLPSTATE DLPSTATE Position */
+#define PWRMODCTL_DPDLPSTATE_DLPSTATE_Msk                 3UL                          /*!< PWRMODCTL DPDLPSTATE DLPSTATE Mask */
+
+/*@}*/ /* end of group CMSIS_PWRMODCTL */
 
 
 /**
@@ -3093,6 +3127,7 @@ typedef struct
   #define SCS_BASE            (0xE000E000UL)                             /*!< System Control Space Base Address */
   #define ITM_BASE            (0xE0000000UL)                             /*!< ITM Base Address */
   #define DWT_BASE            (0xE0001000UL)                             /*!< DWT Base Address */
+  #define PWRMODCTL_BASE      (0xE001E300UL)                             /*!< Power Mode Control Base Address */
   #define TPI_BASE            (0xE0040000UL)                             /*!< TPI Base Address */
   #define CoreDebug_BASE      (0xE000EDF0UL)                             /*!< \deprecated Core Debug Base Address */
   #define DCB_BASE            (0xE000EDF0UL)                             /*!< DCB Base Address */
@@ -3108,6 +3143,7 @@ typedef struct
   #define ITM                 ((ITM_Type       *)     ITM_BASE         ) /*!< ITM configuration struct */
   #define DWT                 ((DWT_Type       *)     DWT_BASE         ) /*!< DWT configuration struct */
   #define TPI                 ((TPI_Type       *)     TPI_BASE         ) /*!< TPI configuration struct */
+  #define PWRMODCTL           ((PwrModCtl_Type *)     PWRMODCTL_BASE   ) /*!< Power Mode Control configuration struct */
   #define CoreDebug           ((CoreDebug_Type *)     CoreDebug_BASE   ) /*!< \deprecated Core Debug configuration struct */
   #define DCB                 ((DCB_Type       *)     DCB_BASE         ) /*!< DCB configuration struct */
   #define DIB                 ((DIB_Type       *)     DIB_BASE         ) /*!< DIB configuration struct */

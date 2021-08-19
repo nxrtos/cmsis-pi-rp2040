@@ -3,10 +3,13 @@
  * Title:        arm_fir_f16.c
  * Description:  Floating-point FIR filter processing function
  *
- * Target Processor: Cortex-M cores
+ * $Date:        23 April 2021
+ * $Revision:    V1.9.0
+ *
+ * Target Processor: Cortex-M and Cortex-A cores
  * -------------------------------------------------------------------- */
 /*
- * Copyright (C) 2010-2020 ARM Limited or its affiliates. All rights reserved.
+ * Copyright (C) 2010-2021 ARM Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -56,6 +59,7 @@
             vecAcc0 = vfmaq(vecAcc0, vecIn0, c[i]);                        \
         }
 
+#define NB_TAPS 4
 __STATIC_INLINE void arm_fir_f16_1_4_mve(const arm_fir_instance_f16 * S, 
     const float16_t * __restrict pSrc, 
     float16_t * __restrict pDst, uint32_t blockSize)
@@ -71,7 +75,6 @@ __STATIC_INLINE void arm_fir_f16_1_4_mve(const arm_fir_instance_f16 * S,
     int32_t         blkCnt;
     float16x8_t         vecIn0;
     float16x8_t         vecAcc0;
-    const int       NB_TAPS=4;
     float16_t       c[NB_TAPS];
 
 
@@ -144,8 +147,9 @@ __STATIC_INLINE void arm_fir_f16_1_4_mve(const arm_fir_instance_f16 * S,
     }
 
 }
+#undef NB_TAPS
 
-
+#define NB_TAPS 8
 __STATIC_INLINE void arm_fir_f16_5_8_mve(const arm_fir_instance_f16 * S, 
     const float16_t * __restrict pSrc, 
     float16_t * __restrict pDst, uint32_t blockSize)
@@ -161,7 +165,6 @@ __STATIC_INLINE void arm_fir_f16_5_8_mve(const arm_fir_instance_f16 * S,
     int32_t         blkCnt;
     float16x8_t         vecIn0;
     float16x8_t         vecAcc0;
-    const int       NB_TAPS=8;
     float16_t       c[NB_TAPS];
 
 
@@ -234,7 +237,7 @@ __STATIC_INLINE void arm_fir_f16_5_8_mve(const arm_fir_instance_f16 * S,
     }
 
 }
-
+#undef NB_TAPS
 
 void arm_fir_f16(const arm_fir_instance_f16 * S, 
   const float16_t * pSrc, 

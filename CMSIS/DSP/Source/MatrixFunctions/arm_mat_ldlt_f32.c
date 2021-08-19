@@ -3,11 +3,13 @@
  * Title:        arm_mat_ldl_f32.c
  * Description:  Floating-point LDL decomposition
  *
+ * $Date:        23 April 2021
+ * $Revision:    V1.9.0
  *
- * Target Processor: Cortex-M cores
+ * Target Processor: Cortex-M and Cortex-A cores
  * -------------------------------------------------------------------- */
 /*
- * Copyright (C) 2010-2020 ARM Limited or its affiliates. All rights reserved.
+ * Copyright (C) 2010-2021 ARM Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,7 +36,7 @@
 
 
 /// @private
-#define SWAP_ROWS(A,i,j)                 \
+#define SWAP_ROWS_F32(A,i,j)                 \
   {                                      \
     int cnt = n;                         \
                                          \
@@ -54,7 +56,7 @@
   }
 
 /// @private
-#define SWAP_COLS(A,i,j)     \
+#define SWAP_COLS_F32(A,i,j)     \
   for(int w=0;w < n; w++)    \
   {                          \
      float32_t tmp;          \
@@ -102,8 +104,7 @@ arm_status arm_mat_ldlt_f32(
   if ((pSrc->numRows != pSrc->numCols) ||
       (pl->numRows != pl->numCols) ||
       (pd->numRows != pd->numCols) ||
-      (pp->numRows != pp->numCols) ||
-      (pl->numRows != pl->numRows)   )
+      (pl->numRows != pd->numRows)   )
   {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;
@@ -155,8 +156,8 @@ arm_status arm_mat_ldlt_f32(
 
         if(j != k)
         {
-          SWAP_ROWS(pA,k,j);
-          SWAP_COLS(pA,k,j);
+          SWAP_ROWS_F32(pA,k,j);
+          SWAP_COLS_F32(pA,k,j);
         }
 
 
@@ -322,7 +323,7 @@ arm_status arm_mat_ldlt_f32(
 #else
 
 /// @private
-#define SWAP_ROWS(A,i,j)     \
+#define SWAP_ROWS_F32(A,i,j)     \
   for(int w=0;w < n; w++)    \
   {                          \
      float32_t tmp;          \
@@ -332,7 +333,7 @@ arm_status arm_mat_ldlt_f32(
   }
 
 /// @private
-#define SWAP_COLS(A,i,j)     \
+#define SWAP_COLS_F32(A,i,j)     \
   for(int w=0;w < n; w++)    \
   {                          \
      float32_t tmp;          \
@@ -380,8 +381,7 @@ arm_status arm_mat_ldlt_f32(
   if ((pSrc->numRows != pSrc->numCols) ||
       (pl->numRows != pl->numCols) ||
       (pd->numRows != pd->numCols) ||
-      (pp->numRows != pp->numCols) ||
-      (pl->numRows != pl->numRows)   )
+      (pl->numRows != pd->numRows)   )
   {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;
@@ -423,8 +423,8 @@ arm_status arm_mat_ldlt_f32(
 
         if(j != k)
         {
-          SWAP_ROWS(pA,k,j);
-          SWAP_COLS(pA,k,j);
+          SWAP_ROWS_F32(pA,k,j);
+          SWAP_COLS_F32(pA,k,j);
         }
 
 

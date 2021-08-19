@@ -14,6 +14,7 @@ include(configLib)
 
 option(NEON "Neon acceleration" OFF)
 option(NEONEXPERIMENTAL "Neon experimental acceleration" OFF)
+option(HELIUMEXPERIMENTAL "Helium experimental acceleration" OFF)
 option(LOOPUNROLL "Loop unrolling" ON)
 option(ROUNDING "Rounding" OFF)
 option(MATRIXCHECK "Matrix Checks" OFF)
@@ -41,6 +42,7 @@ option(SVM                  "Support Vector Machine Functions"  ON)
 option(BAYES                "Bayesian Estimators"               ON)
 option(DISTANCE             "Distance Functions"                ON)
 option(INTERPOLATION        "Interpolation Functions"                ON)
+option(QUATERNIONMATH       "Quaternion Math Functions"                ON)
 
 # When OFF it is the default behavior : all tables are included.
 option(CONFIGTABLE          "Configuration of table allowed"    OFF)
@@ -180,6 +182,11 @@ option(DCT4_Q15_512          "dct4 q15 512"                     OFF)
 option(DCT4_Q15_2048         "dct4 q15 2048"                    OFF)
 option(DCT4_Q15_8192         "dct4 q15 8192"                    OFF)
 
+option(ARM_CFFT_RADIX2_Q15   "deprecated q15 radix2 cfft"       OFF)
+option(ARM_CFFT_RADIX4_Q15   "deprecated q15 radix4 cfft"       OFF)
+
+option(ARM_CFFT_RADIX2_Q31   "deprecated q31 radix2 cfft"       OFF)
+option(ARM_CFFT_RADIX4_Q31   "deprecated q31 radix4 cfft"       OFF)
 
 ###########################
 #
@@ -199,6 +206,11 @@ endif()
 if (COMPLEXMATH)
   add_subdirectory(ComplexMathFunctions)
   target_link_libraries(CMSISDSP INTERFACE CMSISDSPComplexMath)
+endif()
+
+if (QUATERNIONMATH)
+  add_subdirectory(QuaternionMathFunctions)
+  target_link_libraries(CMSISDSP INTERFACE CMSISDSPQuaternionMath)
 endif()
 
 if (CONTROLLER)

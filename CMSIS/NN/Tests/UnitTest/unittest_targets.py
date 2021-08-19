@@ -179,6 +179,8 @@ def test_target(target, args, main_test):
                              ' --source ' + CMSIS_PATH + 'NN/Source/PoolingFunctions/'
                              ' --source ' + CMSIS_PATH + 'NN/Source/NNSupportFunctions/'
                              ' --source ' + CMSIS_PATH + 'NN/Source/FullyConnectedFunctions/'
+                             ' --source ' + CMSIS_PATH + 'NN/Source/SoftmaxFunctions/'
+                             ' --source ' + CMSIS_PATH + 'NN/Source/SVDFunctions/'
                              + cmsis_flags +
                              additional_options,
                              flash_error_msg, die=die)
@@ -364,8 +366,7 @@ def download_unity(force=False):
     os.makedirs(download_dir, exist_ok=False)
     current_dir = os.getcwd()
     os.chdir(download_dir)
-
-    process = subprocess.Popen("curl -LJO https://api.github.com/repos/ThrowTheSwitch/Unity/tarball/v2.5.0".split(),
+    process = subprocess.Popen('curl -LJ https://api.github.com/repos/ThrowTheSwitch/Unity/tarball/v2.5.0 --output unity_tarball.tar.gz'.split(),
                                stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE,
                                universal_newlines=True)
@@ -376,11 +377,7 @@ def download_unity(force=False):
         pass
     if not line:
         error_handler(171)
-    try:
-        m = re.search('\'(.+?)\'', line.strip())
-    except AttributeError as e:
-        error_handler(173, e)
-    downloaded_file = download_dir + m.group(1)
+    downloaded_file = download_dir + "unity_tarball.tar.gz"
     os.chdir(current_dir)
     try:
         filename_base = downloaded_file.split('-')[0]
@@ -395,10 +392,32 @@ def download_unity(force=False):
     shutil.rmtree(download_dir)
 
 
+def parse_generated_test_runner(test_runner):
+    parsed_functions = ['setUp', 'tearDown', 'resetTest', 'verifyTest']
+
+    def is_func_to_parse(func):
+        for f in parsed_functions:
+            if f in func:
+                return True
+        return False
+
+    with open(test_runner, "r") as f:
+        lines = f.readlines()
+    with open(test_runner, "w") as f:
+        for line in lines:
+            sline = line.strip('\n')
+            if not re.search(r"\(void\);", sline):
+                f.write(line)
+            else:
+                if not is_func_to_parse(sline):
+                    f.write(line)
+
+
 def parse_tests(targets, main_tests, specific_test=None):
     """
-    Generate test runners and parse it to know what to expect from the serial console
-    Return True if successful
+    Generate test runners, extract and return path to unit test(s).
+    Also parse generated test runners to avoid warning: redundant redeclaration.
+    Return True if successful.
     """
     test_found = False
     directory = 'TestCases'
@@ -435,6 +454,9 @@ def parse_tests(targets, main_tests, specific_test=None):
             test_found = parse_test(test_runner, targets)
             if not test_found:
                 return False
+
+            parse_generated_test_runner(test_runner)
+
     if not test_found:
         return False
     return True

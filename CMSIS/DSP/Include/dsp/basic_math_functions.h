@@ -2,7 +2,8 @@
  * @file     basic_math_functions.h
  * @brief    Public header file for CMSIS DSP Library
  * @version  V1.9.0
- * @date     20. July 2020
+ * @date     23 April 2021
+ * Target Processor: Cortex-M and Cortex-A cores
  ******************************************************************************/
 /*
  * Copyright (c) 2010-2020 Arm Limited or its affiliates. All rights reserved.
@@ -690,6 +691,70 @@ extern "C"
     const uint8_t * pSrcB,
           uint8_t * pDst,
     uint32_t blockSize);
+
+  /**
+  @brief         Elementwise floating-point clipping
+  @param[in]     pSrc          points to input values
+  @param[out]    pDst          points to output clipped values
+  @param[in]     low           lower bound
+  @param[in]     high          higher bound
+  @param[in]     numSamples    number of samples to clip
+  @return        none
+ */
+
+void arm_clip_f32(const float32_t * pSrc, 
+  float32_t * pDst, 
+  float32_t low, 
+  float32_t high, 
+  uint32_t numSamples);
+
+  /**
+  @brief         Elementwise fixed-point clipping
+  @param[in]     pSrc          points to input values
+  @param[out]    pDst          points to output clipped values
+  @param[in]     low           lower bound
+  @param[in]     high          higher bound
+  @param[in]     numSamples    number of samples to clip
+  @return        none
+ */
+
+void arm_clip_q31(const q31_t * pSrc, 
+  q31_t * pDst, 
+  q31_t low, 
+  q31_t high, 
+  uint32_t numSamples);
+
+  /**
+  @brief         Elementwise fixed-point clipping
+  @param[in]     pSrc          points to input values
+  @param[out]    pDst          points to output clipped values
+  @param[in]     low           lower bound
+  @param[in]     high          higher bound
+  @param[in]     numSamples    number of samples to clip
+  @return        none
+ */
+
+void arm_clip_q15(const q15_t * pSrc, 
+  q15_t * pDst, 
+  q15_t low, 
+  q15_t high, 
+  uint32_t numSamples);
+
+  /**
+  @brief         Elementwise fixed-point clipping
+  @param[in]     pSrc          points to input values
+  @param[out]    pDst          points to output clipped values
+  @param[in]     low           lower bound
+  @param[in]     high          higher bound
+  @param[in]     numSamples    number of samples to clip
+  @return        none
+ */
+
+void arm_clip_q7(const q7_t * pSrc, 
+  q7_t * pDst, 
+  q7_t low, 
+  q7_t high, 
+  uint32_t numSamples);
 
 
 #ifdef   __cplusplus

@@ -4,11 +4,13 @@
  * Title:        arm_minkowski_distance_f16.c
  * Description:  Minkowski distance between two vectors
  *
+ * $Date:        23 April 2021
+ * $Revision:    V1.9.0
  *
- * Target Processor: Cortex-M cores
+ * Target Processor: Cortex-M and Cortex-A cores
  * -------------------------------------------------------------------- */
 /*
- * Copyright (C) 2010-2020 ARM Limited or its affiliates. All rights reserved.
+ * Copyright (C) 2010-2021 ARM Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -67,10 +69,9 @@
 float16_t arm_minkowski_distance_f16(const float16_t *pA,const float16_t *pB, int32_t order, uint32_t blockSize)
 {
     uint32_t        blkCnt;
-    f16x8_t         a, b, tmpV, accumV, sumV;
+    f16x8_t         a, b, tmpV, sumV;
 
     sumV = vdupq_n_f16(0.0f);
-    accumV = vdupq_n_f16(0.0f);
 
     blkCnt = blockSize >> 3;
     while (blkCnt > 0U) {

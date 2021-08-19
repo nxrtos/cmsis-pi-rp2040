@@ -82,8 +82,11 @@ option(REFLIB "Use already built reference lib" OFF)
 option(EMBEDDED "Embedded Mode" ON)
 
 option(FLOAT16TESTS "Float16 tests" OFF)
+option(ALLTESTS "All tests including Float16 tests" OFF)
+
 option(MICROBENCH "Micro benchmarks" OFF)
 option(EXTERNAL "External benchmarks or tests" OFF)
+option(CACHEANALYSIS "Build with cache analysis mode enabled" OFF)
 
 option(DISTINCT "Different generated folder for benchmarking and tests" OFF)
 
@@ -121,6 +124,10 @@ if (AUTOVECTORIZE)
     target_compile_definitions(TestingLib PRIVATE ARM_MATH_AUTOVECTORIZE) 
 endif()
 
+if (CACHEANALYSIS)
+    target_compile_definitions(FrameworkLib PRIVATE CACHEANALYSIS) 
+endif()
+
 
 if (BENCHMARK)
 
@@ -156,6 +163,7 @@ set (NNSRC
    Source/Benchmarks/ComplexMathsBenchmarksF32.cpp
    Source/Benchmarks/ComplexMathsBenchmarksQ31.cpp
    Source/Benchmarks/ComplexMathsBenchmarksQ15.cpp
+   Source/Benchmarks/QuaternionMathsBenchmarksF32.cpp
    Source/Benchmarks/BayesF32.cpp
    Source/Benchmarks/SVMF32.cpp
    Source/Benchmarks/DistanceF32.cpp
@@ -205,7 +213,7 @@ set (NNSRC
  target_include_directories(TestingLib PRIVATE Include/Benchmarks)
  endif()
 
- if ((NOT ARMAC5) AND (FLOAT16TESTS) AND ((FLOAT16) OR (MVEF) OR (HELIUM) OR (NEON) OR (NEONEXPERIMENTAL)))
+ if ((NOT ARMAC5) AND (FLOAT16TESTS OR ALLTESTS) AND ((FLOAT16) OR (MVEF) OR (HELIUM) OR (NEON) OR (NEONEXPERIMENTAL)))
  set(TESTSRC16 Source/Benchmarks/BasicMathsBenchmarksF16.cpp
    Source/Benchmarks/ComplexMathsBenchmarksF16.cpp
    Source/Benchmarks/BayesF16.cpp
@@ -247,6 +255,11 @@ if (BASICMATH)
   Source/Tests/BasicTestsQ31.cpp
   Source/Tests/BasicTestsQ15.cpp
   Source/Tests/BasicTestsQ7.cpp)
+endif()
+
+if (QUATERNIONMATH)
+  set(QUATERNIONMATHSRC Source/Tests/QuaternionTestsF32.cpp
+  )
 endif()
 
 if (COMPLEXMATH)
@@ -336,6 +349,13 @@ if (DISTANCE)
   Source/Tests/DistanceTestsU32.cpp)
 endif()
 
+if (INTERPOLATION)
+  set(INTERPOLATIONSRC Source/Tests/InterpolationTestsF32.cpp
+     Source/Tests/InterpolationTestsQ31.cpp
+     Source/Tests/InterpolationTestsQ15.cpp
+     Source/Tests/InterpolationTestsQ7.cpp)
+endif()
+
 set(TESTSRC 
      ${BASICMATHSRC}
      ${COMPLEXMATHSRC}
@@ -349,18 +369,16 @@ set(TESTSRC
      ${SVMSRC}
      ${BAYESSRC}
      ${DISTANCESRC}
-     Source/Tests/InterpolationTestsF32.cpp
-     Source/Tests/InterpolationTestsQ31.cpp
-     Source/Tests/InterpolationTestsQ15.cpp
-     Source/Tests/InterpolationTestsQ7.cpp
-     Source/Tests/ExampleCategoryF32.cpp
-     Source/Tests/ExampleCategoryQ31.cpp
-     Source/Tests/ExampleCategoryQ15.cpp
-     Source/Tests/ExampleCategoryQ7.cpp
+     ${QUATERNIONMATHSRC}
+     ${INTERPOLATIONSRC}
+     #Source/Tests/ExampleCategoryF32.cpp
+     #Source/Tests/ExampleCategoryQ31.cpp
+     #Source/Tests/ExampleCategoryQ15.cpp
+     #Source/Tests/ExampleCategoryQ7.cpp
   )
 
 
-if ((NOT ARMAC5) AND (FLOAT16TESTS) AND ((FLOAT16) OR (MVEF) OR (HELIUM) OR (NEON) OR (NEONEXPERIMENTAL)))
+if ((NOT ARMAC5) AND (FLOAT16TESTS OR ALLTESTS) AND ((FLOAT16) OR (MVEF) OR (HELIUM) OR (NEON) OR (NEONEXPERIMENTAL)))
 set(TESTSRC16 
   Source/Tests/BasicTestsF16.cpp
   Source/Tests/ComplexTestsF16.cpp
@@ -411,12 +429,23 @@ endif()
 disableOptimization(TestingLib)
 disableOptimization(FrameworkLib)
 
-## Only build f16 version when running float16tests
-if ((NOT ARMAC5) AND (FLOAT16TESTS) AND ((FLOAT16) OR (MVEF) OR (HELIUM) OR (NEON) OR (NEONEXPERIMENTAL)))
-target_sources(TestingLib PRIVATE ${TESTSRC16})
+## Only build f16 version when running float16tests or all tests
+## and float16 are supported
+if (ARMAC5)
+  target_sources(TestingLib PRIVATE ${TESTSRC})
+elseif ((FLOAT16) OR (MVEF) OR (HELIUM) OR (NEON) OR (NEONEXPERIMENTAL))
+      if (ALLTESTS)
+        target_sources(TestingLib PRIVATE ${TESTSRC16})
+        target_sources(TestingLib PRIVATE ${TESTSRC})
+      elseif (FLOAT16TESTS)
+        target_sources(TestingLib PRIVATE ${TESTSRC16})
+      else()
+        target_sources(TestingLib PRIVATE ${TESTSRC})
+      endif()
 else()
-target_sources(TestingLib PRIVATE ${TESTSRC})
+      target_sources(TestingLib PRIVATE ${TESTSRC})
 endif()
+
 
 if(NN)
   target_sources(TestingLib PRIVATE ${NNSRC})
@@ -446,6 +475,8 @@ endif()
 
 target_sources(FrameworkLib PRIVATE ${FRAMEWORKSRC})
 target_sources(FrameworkLib PRIVATE ${FRAMEWORKMODESRC})
+
+target_compile_definitions(FrameworkLib PRIVATE ${PLATFORMOPT}) 
 
 if (DISABLEFLOAT16)
     target_compile_definitions(FrameworkLib PRIVATE DISABLEFLOAT16) 

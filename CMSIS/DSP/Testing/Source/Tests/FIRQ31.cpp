@@ -18,6 +18,8 @@ static void checkInnerTail(q31_t *b)
     ASSERT_TRUE(b[3] == 0);
 }
 
+// Coef must be padded to a multiple of 4
+#define FIRCOEFPADDING 2
 
     void FIRQ31::test_fir_q31()
     {
@@ -34,10 +36,10 @@ static void checkInnerTail(q31_t *b)
         unsigned long i;
 #if defined(ARM_MATH_MVEI) && !defined(ARM_MATH_AUTOVECTORIZE)
         int j;
+        int round;
 #endif
         int blockSize;
         int numTaps;
-        int nb=1;
 
         /*
 
@@ -55,7 +57,18 @@ static void checkInnerTail(q31_t *b)
 #if defined(ARM_MATH_MVEI) && !defined(ARM_MATH_AUTOVECTORIZE)
            /* Copy coefficients and pad to zero 
            */
-           memset(coeffArray,0,32*sizeof(q31_t));
+           memset(coeffArray,127,32*sizeof(q31_t));
+           round = numTaps >> FIRCOEFPADDING;
+           if ((round << FIRCOEFPADDING) < numTaps)
+           {
+             round ++;
+           }
+           round = round<<FIRCOEFPADDING;
+           memset(coeffArray,0,round*sizeof(q31_t));
+
+           //printf("blockSize=%d, numTaps=%d, round=%d (%d)\n",blockSize,numTaps,round,round - numTaps);
+
+
            for(j=0;j < numTaps; j++)
            {
               coeffArray[j] = orgcoefsp[j];
@@ -99,7 +112,6 @@ static void checkInnerTail(q31_t *b)
            configp += 2;
            orgcoefsp += numTaps;
 
-           nb += blockSize + blockSize;
 
 
         }

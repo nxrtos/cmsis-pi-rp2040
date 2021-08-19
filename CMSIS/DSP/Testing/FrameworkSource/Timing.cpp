@@ -62,7 +62,7 @@ unsigned int startCycles;
 #define ENABLE_DIVIDER 0 
 #endif
 
-#ifdef EXTBENCH
+#if defined(EXTBENCH)  || defined(CACHEANALYSIS)
 unsigned long sectionCounter=0;
 #endif 
 
@@ -162,7 +162,15 @@ Testing::cycles_t getCycles()
     {
       result = SYSTICK_INITIAL_VALUE - (v - startCycles);
     }
+    /* SysTick tested and tuned on IPSS.
+       On other FVP, the value is forced to 0
+       because measurement is wrong.
+    */
+    #if defined(NORMALFVP)
+    return(0);
+    #else
     return(result);
+    #endif
 #endif 
 
 #if defined(CORTEXA) || defined(CORTEXR)

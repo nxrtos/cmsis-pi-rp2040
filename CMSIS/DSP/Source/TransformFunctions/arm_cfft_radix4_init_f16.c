@@ -3,13 +3,13 @@
  * Title:        arm_cfft_radix4_init_f16.c
  * Description:  Radix-4 Decimation in Frequency Floating-point CFFT & CIFFT Initialization function
  *
- * $Date:        18. March 2019
- * $Revision:    V1.6.0
+ * $Date:        23 April 2021
+ * $Revision:    V1.9.0
  *
- * Target Processor: Cortex-M cores
+ * Target Processor: Cortex-M and Cortex-A cores
  * -------------------------------------------------------------------- */
 /*
- * Copyright (C) 2010-2019 ARM Limited or its affiliates. All rights reserved.
+ * Copyright (C) 2010-2021 ARM Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -65,6 +65,8 @@
   @par
                    This Function also initializes Twiddle factor table pointer and Bit reversal table pointer.
  */
+
+#if defined(ARM_FLOAT16_SUPPORTED)
 
 arm_status arm_cfft_radix4_init_f16(
   arm_cfft_radix4_instance_f16 * S,
@@ -163,7 +165,7 @@ arm_status arm_cfft_radix4_init_f16(
 #endif
   return (status);
 }
-
+#endif /* #if defined(ARM_FLOAT16_SUPPORTED) */
 /**
   @} end of ComplexFFT group
  */

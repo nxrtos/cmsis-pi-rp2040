@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Arm Limited or its affiliates. All rights reserved.
+ * Copyright (C) 2010-2021 Arm Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,8 +21,8 @@
  * Title:        arm_depthwise_separable_conv_HWC_q7_nonsquare.c
  * Description:  Q7 depthwise separable convolution function (non-square shape)
  *
- * $Date:        09. October 2020
- * $Revision:    V.1.0.1
+ * $Date:        January 26, 2021
+ * $Revision:    V.1.0.2
  *
  * Target Processor:  Cortex-M cores
  *
@@ -66,7 +66,7 @@
  * <code>ARM_MATH_SIZE_MISMATCH</code> or <code>ARM_MATH_SUCCESS</code> based on the outcome of size checking.
  *
  * This function is the version with full list of optimization tricks, but with
- * some contraints:
+ * some constraints:
  *   ch_im_in is equal to ch_im_out
  *
  */
@@ -377,6 +377,8 @@ arm_status arm_depthwise_separable_conv_HWC_q7_nonsquare(const q7_t *Im_in,
     }
 
 #else
+    (void)bufferA;
+
     /* Run the following code as reference implementation for Cortex-M0 and Cortex-M3 */
     int i_out_y, i_out_x, i_ch_out;
     int i_ker_y, i_ker_x;

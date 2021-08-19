@@ -14,6 +14,8 @@ group Root {
               folder = StatsF16
 
               Pattern INPUT1_F16_ID : Input1_f16.txt 
+              Pattern INPUTNEW1_F16_ID : InputNew1_f16.txt 
+
               Pattern INPUT2_F16_ID : Input2_f16.txt 
               Pattern MAXINDEXES_S16_ID : MaxIndexes1_s16.txt
               Pattern MAXVALS_F16_ID : MaxVals1_f16.txt
@@ -42,6 +44,12 @@ group Root {
               Pattern INPUTB25_F16_ID : InputB25_f16.txt
               Pattern DIM25_S16_ID : Dims25_s16.txt 
               Pattern REF25_LOGSUMEXP_DOT_F16_ID : RefLogSumExpDot25_f16.txt
+
+              Pattern ABSMAXINDEXES_S16_ID : AbsMaxIndexes26_s16.txt
+              Pattern ABSMAXVALS_F16_ID : AbsMaxVals26_f16.txt
+
+              Pattern ABSMININDEXES_S16_ID : AbsMinIndexes27_s16.txt
+              Pattern ABSMINVALS_F16_ID : AbsMinVals27_f16.txt
 
               Output  OUT_F16_ID : Output
               Output  OUT_S16_ID : Index
@@ -91,6 +99,14 @@ group Root {
                 Test long  arm_var_f16:test_var_f16
 
                 Test stability  arm_std_f16:test_std_stability_f16
+
+                Test nb=3    arm_absmax_f16:test_absmax_f16
+                Test nb=4n   arm_absmax_f16:test_absmax_f16
+                Test nb=4n+1 arm_absmax_f16:test_absmax_f16
+
+                Test nb=3    arm_absmin_f16:test_absmin_f16
+                Test nb=4n   arm_absmin_f16:test_absmin_f16
+                Test nb=4n+1 arm_absmin_f16:test_absmin_f16
               }
            }
         }
@@ -217,7 +233,9 @@ group Root {
    
               Pattern INPUT1_F16_ID : Input1_f16.txt 
               Pattern INPUT2_F16_ID : Input2_f16.txt 
-   
+
+              Pattern INPUT_CLIP_F16_ID : Input12_f16.txt 
+              
               Pattern REF_ADD_F16_ID : Reference1_f16.txt
               Pattern REF_SUB_F16_ID : Reference2_f16.txt
               Pattern REF_MULT_F16_ID : Reference3_f16.txt
@@ -229,6 +247,10 @@ group Root {
               Pattern REF_DOT_4N1_F16_ID : Reference9_f16.txt
               Pattern REF_ABS_F16_ID : Reference10_f16.txt
               Pattern REF_DOT_LONG_F16_ID : Reference11_f16.txt
+
+              Pattern REF_CLIP1_F16_ID : Reference12_f16.txt
+              Pattern REF_CLIP2_F16_ID : Reference13_f16.txt
+              Pattern REF_CLIP3_F16_ID : Reference14_f16.txt
    
               Output  OUT_SAMPLES_F16_ID : Output
               Output  OUT_STATE_F16_ID : State
@@ -274,6 +296,9 @@ group Root {
                 Test long    arm_scale_f16:test_scale_f16
                 Test long    arm_dot_prod_f16:test_dot_prod_f16
                 Test long    arm_abs_f16:test_abs_f16
+                Test 1       arm_clip_f16:test_clip_f16
+                Test 2       arm_clip_f16:test_clip_f16
+                Test 3       arm_clip_f16:test_clip_f16
               }
            }
 
@@ -510,6 +535,15 @@ group Root {
                 Pattern INPUTA_F16_ID : InputsA1_f16.txt
                 Pattern INPUTB_F16_ID : InputsB1_f16.txt
 
+                Pattern INPUTA2_F16_ID : InputsA2_f16.txt
+                Pattern INPUTB2_F16_ID : InputsB2_f16.txt
+
+                Pattern INPUTPHI_A_F16_ID : InputPhi81_f16.txt
+                Pattern INPUTPHI_B_F16_ID : InputPhi82_f16.txt
+                Pattern INPUTPHI_C_F16_ID : InputPhi83_f16.txt
+
+                Pattern INPUT_ERRORS_F16_ID : LDErrors81_f16.txt
+
                 Pattern REF1_F16_ID : Reference1_f16.txt
                 Pattern REF2_F16_ID : Reference2_f16.txt
                 Pattern REF3_F16_ID : Reference3_f16.txt
@@ -590,9 +624,17 @@ group Root {
                 Pattern REF78_F16_ID : Reference78_f16.txt
                 Pattern REF79_F16_ID : Reference79_f16.txt
                 Pattern REF80_F16_ID : Reference80_f16.txt
+                Pattern REF81_F16_ID : Reference81_f16.txt
+                Pattern REF82_F16_ID : Reference82_f16.txt
+                Pattern REF83_F16_ID : Reference83_f16.txt
+
+                Pattern REF84_F16_ID : Reference84_f16.txt
+                Pattern REF85_F16_ID : Reference85_f16.txt
+                Pattern REF86_F16_ID : Reference86_f16.txt
 
 
                 Output  OUT_F16_ID : Output
+                Output  TMP_F16_ID : Temp
 
                 Functions {
                   arm_correlate_f16 nba=4 nbb=1:test_correlate_f16
@@ -635,6 +677,9 @@ group Root {
                   arm_correlate_f16 nba=13 nbb=3:test_correlate_f16
                   arm_correlate_f16 nba=13 nbb=8:test_correlate_f16
                   arm_correlate_f16 nba=13 nbb=11:test_correlate_f16
+                  arm_levinson_durbin_f16 n=7:test_levinson_durbin_f16
+                  arm_levinson_durbin_f16 n=16:test_levinson_durbin_f16
+                  arm_levinson_durbin_f16 n=23:test_levinson_durbin_f16
                 }
 
              }

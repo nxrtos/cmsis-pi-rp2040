@@ -1,9 +1,12 @@
 /******************************************************************************
  * @file     arm_vec_math_f16.h
  * @brief    Public header file for CMSIS DSP Library
+ * @version  V1.9.0
+ * @date     23 April 2021
+ * Target Processor: Cortex-M and Cortex-A cores
  ******************************************************************************/
 /*
- * Copyright (c) 2010-2020 Arm Limited or its affiliates. All rights reserved.
+ * Copyright (c) 2010-2021 Arm Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -140,22 +143,17 @@ __STATIC_INLINE float16x8_t vtaylor_polyq_f16(
     return res;
 }
 
-__STATIC_INLINE float16x8_t vmant_exp_f16(
-    float16x8_t     x,
-    int16x8_t * e)
-{
-    any16x8_t       r;
-    int16x8_t       n;
-
-    r.f = x;
-    n = r.i >> 10;
-    n = n - 15;
-    r.i = r.i - (n << 10);
-
-    *e = n;
-    return r.f;
-}
-
+#define VMANT_EXP_F16(x)  \
+    any16x8_t       r;    \
+    int16x8_t       n;    \
+                          \
+    r.f = x;              \
+    n = r.i >> 10;        \
+    n = n - 15;           \
+    r.i = r.i - (n << 10);\
+                          \
+    vecExpUnBiased = n;   \
+    vecTmpFlt1 = r.f;
 
 __STATIC_INLINE float16x8_t vlogq_f16(float16x8_t vecIn)
 {
@@ -167,7 +165,7 @@ __STATIC_INLINE float16x8_t vlogq_f16(float16x8_t vecIn)
     /*
      * extract exponent
      */
-    vecTmpFlt1 = vmant_exp_f16(vecIn, &vecExpUnBiased);
+    VMANT_EXP_F16(vecIn);
 
     vecTmpFlt0 = vecTmpFlt1 * vecTmpFlt1;
     /*

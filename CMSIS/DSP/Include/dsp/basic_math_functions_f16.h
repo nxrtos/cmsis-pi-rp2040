@@ -2,7 +2,8 @@
  * @file     basic_math_functions_f16.h
  * @brief    Public header file for CMSIS DSP Library
  * @version  V1.9.0
- * @date     20. July 2020
+ * @date     23 April 2021
+ * Target Processor: Cortex-M and Cortex-A cores
  ******************************************************************************/
 /*
  * Copyright (c) 2010-2020 Arm Limited or its affiliates. All rights reserved.
@@ -141,6 +142,22 @@ extern "C"
   const float16_t * pSrc,
         float16_t * pDst,
         uint32_t blockSize);
+
+  /**
+  @brief         Elementwise floating-point clipping
+  @param[in]     pSrc          points to input values
+  @param[out]    pDst          points to output clipped values
+  @param[in]     low           lower bound
+  @param[in]     high          higher bound
+  @param[in]     numSamples    number of samples to clip
+  @return        none
+ */
+
+void arm_clip_f16(const float16_t * pSrc, 
+  float16_t * pDst, 
+  float16_t low, 
+  float16_t high, 
+  uint32_t numSamples);
 
 #endif /* defined(ARM_FLOAT16_SUPPORTED)*/
 

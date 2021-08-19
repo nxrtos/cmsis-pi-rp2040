@@ -2,10 +2,11 @@
  * @file     arm_math_types_f16.h
  * @brief    Public header file for f16 function of the CMSIS DSP Library
  * @version  V1.9.0
- * @date     20. July 2020
+ * @date     23 April 2021
+ * Target Processor: Cortex-M and Cortex-A cores
  ******************************************************************************/
 /*
- * Copyright (c) 2010-2020 Arm Limited or its affiliates. All rights reserved.
+ * Copyright (c) 2010-2021 Arm Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -48,16 +49,16 @@ If it is not available, f16 version of the kernels
 won't be built.
 
 */
-#if !(__ARM_FEATURE_MVE & 2) && !(__ARM_NEON)
-  #if defined(__ARM_FP16_FORMAT_IEEE) || defined(__ARM_FP16_FORMAT_ALTERNATIVE)
-  typedef __fp16 float16_t;
-  #define ARM_FLOAT16_SUPPORTED
+#if !(__ARM_FEATURE_MVE & 2)
+  #if !defined(DISABLEFLOAT16)
+    #if defined(__ARM_FP16_FORMAT_IEEE) || defined(__ARM_FP16_FORMAT_ALTERNATIVE)
+      typedef __fp16 float16_t;
+      #define ARM_FLOAT16_SUPPORTED
+    #endif
   #endif
 #else
-  /* HW Float16 not yet well supported on some configs */
-  #if !defined(DISABLEFLOAT16)
-    #define ARM_FLOAT16_SUPPORTED
-  #endif
+  /* When Vector float16, this flag is always defined and can't be disabled */
+  #define ARM_FLOAT16_SUPPORTED
 #endif
 
 #if defined(ARM_MATH_NEON) || (defined(ARM_MATH_MVEF)  && !defined(ARM_MATH_AUTOVECTORIZE)) /* floating point vector*/
